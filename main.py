@@ -32,6 +32,10 @@ def readby_id(expense_id:int, db:Session=Depends(get_db)):
 def readby_month(month: int, year: int, db:Session=Depends(get_db)):
     return crud.get_expensebymonth(db,month,year)
 
-@app.put("/update/")
+@app.put("/update/{expense_id}")
 def upd_expense(id: int,user: schemas.UserCreate, db: Session=Depends(get_db)):
     return crud.update_expense(db,id,user)
+
+@app.delete("/delete/{expense_id}")
+def delete_expense(id:int,db:Session=Depends(get_db)):
+    return crud.delete_user(db,id)

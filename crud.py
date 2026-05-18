@@ -86,13 +86,36 @@ def update_expense(db:Session,id: int, user:schemas.UserCreate):
 
     if not up_expense:
         raise HTTPException(status_code=404, detail="Expense Id is not found")
-    else:
-        up_expense.title = user.title
-        up_expense.amount = user.amount
-        up_expense.category = user.category
-        up_expense.notes = user.notes
+    # else:
+    #     up_expense.title = user.title
+    #     up_expense.amount = user.amount
+    #     up_expense.category = user.category
+    #     up_expense.notes = user.notes
 
-        db.commit()
-        db.refresh(up_expense)
+    # for key,value in user.dict(exclude_upset = True).items():
+
+    for key,value in user.model_dump(exclude_unset=True).items():    
+        setattr(up_expense,key,value)
+
+    db.commit()
+    db.refresh(up_expense)
 
     return up_expense    
+
+
+
+
+def delete_user(db:Session, id: int):
+    del_expense = db.query(models.User).filter(models.User.id == id).first()
+
+
+    if not del_expense:
+        raise HTTPException(status_code=404, detail="Expense Id is not found")
+    
+    db.delete(del_expense)
+    db.commit()
+    
+
+    # return del_expense
+    return {"message":"successfully deleted"}
+
